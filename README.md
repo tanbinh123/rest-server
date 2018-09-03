@@ -1,2 +1,1 @@
-# rest-server
-rest server to be easily consumed
+springboot-cv
