@@ -30,6 +30,9 @@ public class EventService {
 	public void insert(EventIn event) {
 
 		Set<Event> events = new HashSet<Event>() {
+
+			private static final long serialVersionUID = 1L;
+
 			{
 				add(EventBuilder.build(event, new HashSet<Technology>(technologyService.updatedEvents(event))));
 			}
