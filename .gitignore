@@ -6,3 +6,5 @@ src/main/\.DS_Store
 /target/classes/
 
 \.settings/
+
+.DS_Store
