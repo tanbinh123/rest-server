@@ -4,23 +4,31 @@
 
 App to be consumed easily. It's a free dormant service, so it might need a wake up using base url
 
-<h5>Base URL:<h5>
+<h2>Docker</h2>
+You can also run 
 
-https://spring-cv.herokuapp.com
+```
+docker-compose up
+```
 
+<h2>Heroku</h2>
+<h5>Base URL:</h5>
 
+	https://spring-cv.herokuapp.com
+	
 
-<h5>Currrent services:<h5>
+<h5>Currrent services:</h5>
 
+```
 GET https://spring-cv.herokuapp.com/cv
 
 POST https://spring-cv.herokuapp.com/login
+```
 
 
+<h5>Login:</h5>
 
-<h5>Login:<h5>
-
-https://spring-cv.herokuapp.com/login
+	https://spring-cv.herokuapp.com/login
 
 consumes:
 
@@ -39,9 +47,9 @@ Authorization
 
 
 
-<h5>CV:<h5>
+<h5>CV:</h5>
 
-https://spring-cv.herokuapp.com/cv
+	https://spring-cv.herokuapp.com/cv
 
 consumes:
 
