@@ -1,0 +1,39 @@
+version: 2
+
+_run:
+  jceinstall: &jceinstall
+    name: "Download JCE unlimited strength policy to allow the 256 bit keys"
+    command: |
+      curl -L --cookie 'oraclelicense=accept-securebackup-cookie;'  http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip -o /tmp/jce_policy.zip
+      unzip -o /tmp/jce_policy.zip -d /tmp
+      sudo mv -f /tmp/UnlimitedJCEPolicyJDK8/US_export_policy.jar $JAVA_HOME/jre/lib/security/US_export_policy.jar
+      sudo mv -f /tmp/UnlimitedJCEPolicyJDK8/local_policy.jar $JAVA_HOME/jre/lib/security/local_policy.jar
+  javaversion: &javaversion
+    name: "Report Java JDK Version being used"
+    command: |
+      echo ${JAVA_HOME}
+  restorecache: &restorecache
+    name: "Download and Cache Dependencies"
+    keys:
+      - v1-dependencies-{{ checksum "pom.xml" }}
+      # fallback to using the latest cache if no exact match is found
+      - v1-dependencies-
+
+jobs:
+  build:
+    docker:
+      - image: maven:3.6.2-jdk-13
+    environment:
+      # Customize the JVM maximum heap limit
+      MAVEN_OPTS: -Xmx3200m
+      _JAVA_OPTIONS: "-Xmx3g"
+    steps:
+      - checkout
+      - restore_cache: *restorecache
+      - run:
+          name: Install dependencies
+          command: mvn dependency:go-offline install
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
