@@ -2,7 +2,7 @@ package com.mac.springboot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,7 +34,7 @@ public class HttpRequestTest {
 	@Test
 	public void greetingShouldReturnDefaultMessage() throws Exception {
 
-		var target = this.restTemplate.getForObject("http://localhost:" + port + "/", String.class);
+		var target = this.restTemplate.getForObject(getUrl(Optional.empty()), String.class);
 		assertThat(target).contains("ok");
 	}
 
@@ -42,17 +42,19 @@ public class HttpRequestTest {
 	public void shouldReturnLogin() throws Exception {
 
 		var request = new HttpEntity<String>(Util.toJson(new Auth("admin", "password")));
-		HttpEntity<String> response = restTemplate.exchange("https://spring-cv.herokuapp.com/login", HttpMethod.POST,
-				request, String.class);
+		HttpEntity<String> response = restTemplate.exchange(getUrl(Optional.of("login")), HttpMethod.POST, request,
+				String.class);
 
 		// String resultString = response.getBody();
 		HttpHeaders headers = response.getHeaders();
-		
-		
+
 		Pattern pattern = Pattern.compile("Bearer");
-		var matching = headers.get(HttpHeaders.AUTHORIZATION).stream()
-		                            .filter(pattern.asPredicate())
-		                            .collect(Collectors.toList());
+		var matching = headers.get(HttpHeaders.AUTHORIZATION).stream().filter(pattern.asPredicate())
+				.collect(Collectors.toList());
 		assertThat(matching).hasSize(1);
+	}
+
+	private String getUrl(Optional<String> endpoint) {
+		return "http://localhost:" + port + "/" + endpoint.orElse("");
 	}
 }
