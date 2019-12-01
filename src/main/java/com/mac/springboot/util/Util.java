@@ -4,6 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 public class Util {
 
 	public static Date parseDate(String dateInString) {
@@ -19,6 +23,11 @@ public class Util {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static String toJson(Object object) throws JsonProcessingException {
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		return ow.writeValueAsString(object);
 	}
 
 }
