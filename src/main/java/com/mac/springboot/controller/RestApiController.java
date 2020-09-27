@@ -1,6 +1,7 @@
 package com.mac.springboot.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mac.springboot.controller.ro.out.EventOut;
@@ -24,6 +26,9 @@ public class RestApiController {
 
 	@Autowired
 	private EventService eventService;
+
+	@Autowired
+	private MetricService metricService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> ok() {
@@ -41,6 +46,12 @@ public class RestApiController {
 	public ResponseEntity<List<EventOut>> listJobEvents() {
 
 		return new ResponseEntity<>(eventService.listJobEvents(), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/metric", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map getStatusMetric() {
+		return metricService.getStatusMetric();
 	}
 
 }
