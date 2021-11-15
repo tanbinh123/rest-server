@@ -1,6 +1,5 @@
 package com.mac.springboot.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mac.springboot.controller.ro.out.EventOut;
 import com.mac.springboot.service.EventService;
 
 @RestController
@@ -37,20 +35,20 @@ public class RestApiController {
 	}
 
 	@RequestMapping(value = "/cv", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<EventOut>> listAllEvents() {
+	public ResponseEntity<Object> listAllEvents() {
 
-		return new ResponseEntity<>(eventService.listAllEvents(), HttpStatus.OK);
+		return ResponseEntity.status(HttpStatus.OK).body(eventService.listAllEvents());
 	}
 
 	@RequestMapping(value = "/cv/jobs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<EventOut>> listJobEvents() {
+	public ResponseEntity<Object> listJobEvents() {
 
-		return new ResponseEntity<>(eventService.listJobEvents(), HttpStatus.OK);
+		return ResponseEntity.status(HttpStatus.OK).body(eventService.listJobEvents());
 	}
 
 	@RequestMapping(value = "/metric", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map getStatusMetric() {
+	public Map<?, ?> getStatusMetric() {
 		return metricService.getStatusMetric();
 	}
 

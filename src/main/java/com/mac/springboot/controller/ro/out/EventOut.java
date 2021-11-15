@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mac.springboot.domain.Event;
 import com.mac.springboot.domain.Event.Type;
-import com.mac.springboot.domain.Technology;
 
-@SuppressWarnings("unused")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventOut {
 
 	public EventOut() {

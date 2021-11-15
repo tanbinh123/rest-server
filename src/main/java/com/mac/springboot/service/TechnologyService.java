@@ -1,8 +1,8 @@
 package com.mac.springboot.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,42 +25,46 @@ public class TechnologyService {
 	public List<Technology> updatedEvents(EventIn event) {
 
 		List<String> newTechnologies = event.getTechnologies();
-		List<String> savedTechnologiesNames = new ArrayList<>();
-		List<Technology> savedTechnologies = getSavedTechnologies(newTechnologies);
+
 		List<Technology> allTechnologies = new ArrayList<>();
-
-		if (savedTechnologies != null && !savedTechnologies.isEmpty()) {
-			allTechnologies.addAll(savedTechnologies);
-			savedTechnologiesNames = savedTechnologies.stream().map(Technology::getName).collect(Collectors.toList());
-		}
-
-		for (String technology : newTechnologies) {
-			if (!savedTechnologiesNames.contains(technology)) {
-				allTechnologies.add(new Technology(technology, null));
-			}
-		}
+		allTechnologies.addAll(getSavedTechnologies(newTechnologies));
+		allTechnologies.addAll(createTechnologiesIfNotExist(newTechnologies));
 
 		return allTechnologies;
 	}
 
-	@Transactional(propagation = Propagation.SUPPORTS)
-	public List<Technology> getSavedTechnologies(List<String> newTechnologies) {
-		List<Technology> savedTechnologies = new ArrayList<>();
-		for (String newTechnology : newTechnologies) {
-			if (getSavedTechnology(newTechnology) != null) {
-				savedTechnologies.add(getSavedTechnology(newTechnology));
-			}
-		}
-
-		return savedTechnologies;
-	}
-
 	@Cacheable(value = "techonlogies", key = "#newTechnology", unless = "#result == null")
-	private Technology getSavedTechnology(String newTechnology) {
-		Optional<Technology> savedTechnologyOpt = technologyRepository.findOneByName(newTechnology);
+	private List<Technology> getSavedTechnologies(List<String> technolgies) {
+		var savedTechnologyOpt = technologyRepository.findByName(technolgies);
 		if (savedTechnologyOpt.isPresent()) {
 			return savedTechnologyOpt.get();
 		}
 		return null;
+	}
+
+	public HashSet<Technology> uniqueUpdatedTechnologies(EventIn event) {
+		return new HashSet<Technology>(updatedEvents(event));
+	}
+
+	private List<Technology> createTechnologiesIfNotExist(List<String> newTechnologies) {
+		List<Technology> createdTechnologies = new ArrayList<>();
+
+		List<String> savedTechnologiesNames = savedTechnologiesNames(newTechnologies);
+
+		for (String technology : newTechnologies) {
+			if (!savedTechnologiesNames.contains(technology)) {
+				createdTechnologies.add(new Technology(technology, null));
+			}
+		}
+
+		return createdTechnologies;
+	}
+
+	private List<String> savedTechnologiesNames(List<String> technolgies) {
+		List<Technology> savedTechnologies = getSavedTechnologies(technolgies);
+		if (savedTechnologies != null && !savedTechnologies.isEmpty()) {
+			return savedTechnologies.stream().map(Technology::getName).collect(Collectors.toList());
+		}
+		return List.of();
 	}
 }

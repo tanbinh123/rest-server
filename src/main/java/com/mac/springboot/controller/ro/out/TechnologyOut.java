@@ -3,8 +3,10 @@ package com.mac.springboot.controller.ro.out;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mac.springboot.domain.Technology;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TechnologyOut {
 	public TechnologyOut() {
 

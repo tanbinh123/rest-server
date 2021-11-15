@@ -1,9 +1,7 @@
 package com.mac.springboot.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mac.springboot.controller.ro.in.EventIn;
 import com.mac.springboot.controller.ro.out.EventOut;
 import com.mac.springboot.domain.Event;
-import com.mac.springboot.domain.Technology;
 import com.mac.springboot.domain.builder.EventBuilder;
 import com.mac.springboot.repository.EventRepository;
 
@@ -28,26 +25,18 @@ public class EventService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void insert(EventIn event) {
+		eventRepository.save(buildNewEvent(event));
+	}
 
-		Set<Event> events = new HashSet<Event>() {
-
-			private static final long serialVersionUID = 1L;
-
-			{
-				add(EventBuilder.build(event, new HashSet<Technology>(technologyService.updatedEvents(event))));
-			}
-		};
-
-		for (Event element : events) {
-			eventRepository.save(element);
-		}
-
+	private Event buildNewEvent(EventIn event) {
+		return EventBuilder.build(event, technologyService.uniqueUpdatedTechnologies(event));
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<EventOut> listAllEvents() {
 		List<EventOut> result = new ArrayList<EventOut>();
-		for (Event event : eventRepository.findAll()) {
+		var events = eventRepository.findAll();
+		for (Event event : events) {
 			result.add(new EventOut(event));
 		}
 		return result;
